@@ -54,8 +54,7 @@ RUN source ~/miniconda3/bin/activate \
 
 # biorbd and nlopt
 RUN source ~/miniconda3/bin/activate \
-  && conda install -c conda-forge python pygame biorbd pip \
-  && pip install nlopt
+  && conda install -c conda-forge python pygame biorbd nlopt catkin_pkg
 
 # bashrc
 RUN printf '%s\n' \
