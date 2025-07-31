@@ -32,6 +32,19 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-vcstool
 
+# RBDL packages
+RUN apt-get update && apt-get install -y \
+    libeigen3-dev \
+    cython3
+RUN git clone --recursive https://github.com/rbdl/rbdl /rbdl
+RUN cd /rbdl/ && git submodule init && git submodule update
+RUN mkdir -p /rbdl/build/ && cd /rbdl/build/ && \
+    cmake -D CMAKE_BUILD_TYPE=Release .. && \
+    cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
+    cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
+    cmake build . && \
+    make install
+
 RUN rm -rf /var/lib/apt/lists/*
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -62,7 +75,11 @@ RUN printf '%s\n' \
 'source /opt/ros/${ROS_DISTRO}/setup.bash' \
 'source /home/robot/ws/install/setup.bash' \
 'source ~/miniconda3/bin/activate' \
-"alias build='cd /home/robot/ws/ && colcon build --parallel-workers 4 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'" \
+"alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'" \
+>> /home/robot/.bashrc
+
+RUN printf '%s\n' \
+'export PYTHONPATH=$PYTHONPATH:/rbdl/build/python' \
 >> /home/robot/.bashrc
 
 # GPU plugins in Gazebo
