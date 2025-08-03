@@ -36,14 +36,6 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y \
     libeigen3-dev \
     cython3
-RUN git clone --recursive https://github.com/rbdl/rbdl /rbdl
-RUN cd /rbdl/ && git submodule init && git submodule update
-RUN mkdir -p /rbdl/build/ && cd /rbdl/build/ && \
-    cmake -D CMAKE_BUILD_TYPE=Release .. && \
-    cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
-    cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
-    cmake build . && \
-    make install
 
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -67,7 +59,16 @@ RUN source ~/miniconda3/bin/activate \
 
 # biorbd and nlopt
 RUN source ~/miniconda3/bin/activate \
-  && conda install -c conda-forge python pygame biorbd nlopt catkin_pkg
+  && conda install -c conda-forge python pygame nlopt catkin_pkg
+
+RUN git clone --recursive https://github.com/rbdl/rbdl /home/robot/rbdl
+RUN cd /home/robot/rbdl/ && git submodule init && git submodule update
+RUN mkdir -p /home/robot/rbdl/build/ && cd /home/robot/rbdl/build/ && \
+    cmake -D CMAKE_BUILD_TYPE=Release .. && \
+    cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
+    cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
+    cmake build . && \
+    sudo make install
 
 # bashrc
 RUN printf '%s\n' \
@@ -79,7 +80,7 @@ RUN printf '%s\n' \
 >> /home/robot/.bashrc
 
 RUN printf '%s\n' \
-'export PYTHONPATH=$PYTHONPATH:/rbdl/build/python' \
+'export PYTHONPATH=$PYTHONPATH:/home/robot/rbdl/build/python' \
 >> /home/robot/.bashrc
 
 # GPU plugins in Gazebo
