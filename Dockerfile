@@ -59,7 +59,13 @@ RUN source ~/miniconda3/bin/activate \
 
 # biorbd and nlopt
 RUN source ~/miniconda3/bin/activate \
-  && conda install -c conda-forge python pygame nlopt catkin_pkg
+  && conda install -c conda-forge python pygame catkin_pkg
+
+RUN git clone https://github.com/stevengj/nlopt.git /home/robot/nlopt
+RUN mkdir -p /home/robot/nlopt/build && cd /home/robot/nlopt/build && \
+    cmake .. && \
+    cmake build . && \
+    sudo make install
 
 RUN git clone --recursive https://github.com/rbdl/rbdl /home/robot/rbdl
 RUN cd /home/robot/rbdl/ && git submodule init && git submodule update
