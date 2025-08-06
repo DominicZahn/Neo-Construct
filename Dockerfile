@@ -78,6 +78,7 @@ RUN mkdir -p /home/robot/rbdl/build/ && cd /home/robot/rbdl/build/ && \
 
 # bashrc
 RUN printf '%s\n' \
+'export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH' \
 'export TERM=xterm-256color' \
 'source /opt/ros/${ROS_DISTRO}/setup.bash' \
 'source /home/robot/ws/install/setup.bash' \
