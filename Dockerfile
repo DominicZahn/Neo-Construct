@@ -35,7 +35,8 @@ RUN apt-get update && apt-get install -y \
 # RBDL packages
 RUN apt-get update && apt-get install -y \
     libeigen3-dev \
-    cython3
+    cython3 \
+    libopencv-dev
 
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -59,7 +60,8 @@ RUN source ~/miniconda3/bin/activate \
 
 # biorbd and nlopt
 RUN source ~/miniconda3/bin/activate \
-  && conda install -c conda-forge python pygame catkin_pkg
+  && conda install -c conda-forge python pygame catkin_pkg \
+  && pip3 install opencv-python
 
 RUN git clone https://github.com/stevengj/nlopt.git /home/robot/nlopt
 RUN mkdir -p /home/robot/nlopt/build && cd /home/robot/nlopt/build && \
