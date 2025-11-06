@@ -58,9 +58,9 @@ RUN source ~/miniconda3/bin/activate \
   && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
   && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 
-# biorbd and nlopt
+# nlopt and bioptim
 RUN source ~/miniconda3/bin/activate \
-  && conda install -c conda-forge python pygame catkin_pkg \
+  && conda install -c conda-forge python=3.12 bioptim python pygame catkin_pkg \
   && pip3 install opencv-python
 
 RUN git clone https://github.com/stevengj/nlopt.git /home/robot/nlopt
