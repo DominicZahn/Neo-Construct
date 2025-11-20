@@ -59,6 +59,16 @@ RUN source ~/miniconda3/bin/activate \
   && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r \
   && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 
+# RBDL
+RUN git clone --recursive https://github.com/rbdl/rbdl /home/robot/rbdl
+RUN cd /home/robot/rbdl/ && git submodule init && git submodule update
+RUN mkdir -p /home/robot/rbdl/build/ && cd /home/robot/rbdl/build/ && \
+  cmake -D CMAKE_BUILD_TYPE=Release .. && \
+  cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
+  cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
+  cmake build . && \
+  sudo make install
+
 # nlopt and bioptim
 RUN source ~/miniconda3/bin/activate \
   && conda install -c conda-forge python=3.12 bioptim python pygame catkin_pkg \
@@ -67,15 +77,6 @@ RUN source ~/miniconda3/bin/activate \
 RUN git clone https://github.com/stevengj/nlopt.git /home/robot/nlopt
 RUN mkdir -p /home/robot/nlopt/build && cd /home/robot/nlopt/build && \
   cmake .. && \
-  cmake build . && \
-  sudo make install
-
-RUN git clone --recursive https://github.com/rbdl/rbdl /home/robot/rbdl
-RUN cd /home/robot/rbdl/ && git submodule init && git submodule update
-RUN mkdir -p /home/robot/rbdl/build/ && cd /home/robot/rbdl/build/ && \
-  cmake -D CMAKE_BUILD_TYPE=Release .. && \
-  cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
-  cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
   cmake build . && \
   sudo make install
 
@@ -102,5 +103,5 @@ ENV DISPLAY=:1
 ENV QT_X11_NO_MITSHM=1
 ENV XAUTHORITY=/tmp/.docker.xauth
 
-SHELL [ "bin/bash", "-c" ]
+SHELL [ "/bin/bash", "-c" ]
 CMD ["tmux"]
