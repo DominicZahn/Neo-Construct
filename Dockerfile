@@ -44,10 +44,10 @@ RUN apt-get update && apt-get install -y \
 
 # rbdl with urdfreader
 ENV RBDL_DIR=/opt/rbdl
-WORKDIR $RBDL_DIR
+WORKDIR ${RBDL_DIR}
 RUN git clone --recursive https://github.com/rbdl/rbdl /opt/rbdl
 RUN git submodule init && git submodule update
-WORKDIR $RBDL_DIR/build
+WORKDIR ${RBDL_DIR}/build
 RUN cmake -D CMAKE_BUILD_TYPE=Release .. && \
   cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
   cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
@@ -58,9 +58,21 @@ RUN cmake -D CMAKE_BUILD_TYPE=Release .. && \
 # nlopt
 ENV NLOPT_DIR=/opt/nlopt
 RUN git clone https://github.com/stevengj/nlopt.git /opt/nlopt
-WORKDIR $NLOPT_DIR/build
+WORKDIR ${NLOPT_DIR}/build
 RUN cmake .. && \
   cmake build . && \
+  make -j$(nproc) && \
+  make install
+
+# acados
+ENV ACADOS_DIR=/opt/acados
+RUN git clone https://github.com/acados/acados.git /opt/acados
+WORKDIR ${ACADOS_DIR}
+RUN git submodule update --recursive --init
+WORKDIR ${ACADOS_DIR}/build
+RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
+  cmake -D ACADOS_WITH_DAQP=ON .. && \
+  cmake -D ACADOS_EXAMPLES=ON .. && \
   make -j$(nproc) && \
   make install
 
