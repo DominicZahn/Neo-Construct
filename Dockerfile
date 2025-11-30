@@ -21,7 +21,10 @@ RUN apt-get update && apt-get install -y \
   libtinyxml-dev \
   liburdfdom-dev \
   liburdfdom-headers-dev \
-  pkg-config
+  pkg-config \
+  python3-full \
+  python3-pip \
+  python3-numpy
 
 # ROS2 packages
 RUN apt-get update && apt-get install -y \
@@ -37,10 +40,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-tf2-geometry-msgs \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
   python3-colcon-common-extensions \
-  python3-vcstool \
-  python3-pip \
-  python3-numpy \
-  python3-dev
+  python3-vcstool
 
 # rbdl with urdfreader
 ENV RBDL_DIR=/opt/rbdl
@@ -72,9 +72,21 @@ RUN git submodule update --recursive --init
 WORKDIR ${ACADOS_DIR}/build
 RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
   cmake -D ACADOS_WITH_DAQP=ON .. && \
+  # cmake -D ACADOS_WITH_HPMPC=OFF .. && \
+  # cmake -D HPIPM_TARGET=GENERIC .. && \
+  cmake -D ACADOS_WITH_OPENMP=ON .. && \
   cmake -D ACADOS_EXAMPLES=ON .. && \
   make -j$(nproc) && \
   make install
+
+# acados python
+WORKDIR ${ACADOS_DIR}
+RUN python3 -m venv ac_env && \
+  source ac_env/bin/activate && \
+  pip install -e interfaces/acados_template
+RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
+  mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
+  chmod +x bin/t_renderer
 
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
@@ -95,6 +107,11 @@ RUN printf '%s\n' \
   'source /opt/ros/${ROS_DISTRO}/setup.bash' \
   'source /home/robot/ws/install/setup.bash' \
   "alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'" \
+  "alias lsa='ls -la'" \
+  '# acados' \
+  'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib' \
+  'export ACADOS_SOURCE_DIR=$ACADOS_DIR' \
+  'source ${ACADOS_DIR}/ac_env/bin/activate' \
   >> /home/robot/.bashrc
 
 # GPU plugins in Gazebo
