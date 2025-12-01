@@ -40,9 +40,14 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-tf2-ros \
   ros-${ROS_DISTRO}-tf2-geometry-msgs \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
-  ros-$ROS_DISTRO-pinocchio \
   python3-colcon-common-extensions \
   python3-vcstool
+
+# robotpkg
+RUN mkdir -p /etc/apt/keyrings && \
+  curl http://robotpkg.openrobots.org/packages/debian/robotpkg.asc | tee /etc/apt/keyrings/robotpkg.asc && \
+  echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" | tee /etc/apt/sources.list.d/robotpkg.list && \
+  apt-get update
 
 # rbdl with urdfreader
 ENV RBDL_DIR=/opt/rbdl
@@ -90,6 +95,9 @@ RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_rend
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
 
+# pinocchio
+RUN apt-get install robotpkg-py312-pinocchio -y
+
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -113,6 +121,11 @@ RUN printf '%s\n' \
   '# acados' \
   'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib' \
   'export ACADOS_SOURCE_DIR=$ACADOS_DIR' \
+  '# pinocchio' \
+  'export PATH=/opt/openrobots/bin:$PATH' \
+  'export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH' \
+  'export LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH' \
+  'export PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH' \
   >> /home/robot/.bashrc
 
 # GPU plugins in Gazebo
