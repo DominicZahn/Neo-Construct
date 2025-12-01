@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
   x11-apps \
   gdb \
   nano \
+  vim \
   tmux \
   htop \
   nvtop \
@@ -39,6 +40,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-tf2-ros \
   ros-${ROS_DISTRO}-tf2-geometry-msgs \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
+  ros-$ROS_DISTRO-pinocchio \
   python3-colcon-common-extensions \
   python3-vcstool
 
@@ -81,9 +83,9 @@ RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
 
 # acados python
 WORKDIR ${ACADOS_DIR}
-RUN python3 -m venv ac_env && \
-  source ac_env/bin/activate && \
-  pip install -e interfaces/acados_template
+# RUN python3 -m venv ac_env && \
+# source ac_env/bin/activate && \
+RUN pip install -e interfaces/acados_template --break-system-packages
 RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
@@ -111,7 +113,6 @@ RUN printf '%s\n' \
   '# acados' \
   'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib' \
   'export ACADOS_SOURCE_DIR=$ACADOS_DIR' \
-  'source ${ACADOS_DIR}/ac_env/bin/activate' \
   >> /home/robot/.bashrc
 
 # GPU plugins in Gazebo
