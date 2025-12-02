@@ -79,8 +79,6 @@ RUN git submodule update --recursive --init
 WORKDIR ${ACADOS_DIR}/build
 RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
   cmake -D ACADOS_WITH_DAQP=ON .. && \
-  # cmake -D ACADOS_WITH_HPMPC=OFF .. && \
-  # cmake -D HPIPM_TARGET=GENERIC .. && \
   cmake -D ACADOS_WITH_OPENMP=ON .. && \
   cmake -D ACADOS_EXAMPLES=ON .. && \
   make -j$(nproc) && \
@@ -88,8 +86,6 @@ RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
 
 # acados python
 WORKDIR ${ACADOS_DIR}
-# RUN python3 -m venv ac_env && \
-# source ac_env/bin/activate && \
 RUN pip install -e interfaces/acados_template --break-system-packages
 RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
@@ -103,30 +99,11 @@ RUN rm -rf /var/lib/apt/lists/*
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Create user robot
-RUN useradd -m -s /bin/bash robot && echo "robot ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-USER robot
-
-# Setup workspace
+# workspace
 WORKDIR /home/robot/ws
-
-# bashrc
-RUN printf '%s\n' \
-  'export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH' \
-  'export TERM=xterm-256color' \
-  'source /opt/ros/${ROS_DISTRO}/setup.bash' \
-  'source /home/robot/ws/install/setup.bash' \
-  "alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'" \
-  "alias lsa='ls -la'" \
-  '# acados' \
-  'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib' \
-  'export ACADOS_SOURCE_DIR=$ACADOS_DIR' \
-  '# pinocchio' \
-  'export PATH=/opt/openrobots/bin:$PATH' \
-  'export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH' \
-  'export LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH' \
-  'export PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH' \
-  >> /home/robot/.bashrc
+COPY .bash_profile_template /home/robot/.bash_profile
+RUN chmod +x /home/robot/.bash_profile
+RUN echo 'set-option -g default-shell "/bin/bash"' > /home/robot/.tmux.conf
 
 # GPU plugins in Gazebo
 ENV IGN_RENDER_ENGINE=ogre2
@@ -137,5 +114,9 @@ ENV DISPLAY=:1
 ENV QT_X11_NO_MITSHM=1
 ENV XAUTHORITY=/tmp/.docker.xauth
 
-SHELL [ "/bin/bash", "-c" ]
-CMD ["tmux"]
+# entrypoint for user switch
+COPY entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
+SHELL [ "/bin/bash" ]
+CMD [ "tmux" ]
