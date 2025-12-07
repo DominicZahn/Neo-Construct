@@ -4,12 +4,5 @@ source /home/robot/ws/install/setup.bash
 alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'
 alias lsa='ls -la'
 
-# acados
-# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
-# export ACADOS_SOURCE_DIR=$ACADOS_DIR
-
-# pinocchio
-# export PATH=/opt/openrobots/bin:$PATH
-# export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
-# export LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
-# export PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH
+# nvim
+export PATH=$PATH:/opt/nvim-linux-x86_64/bin

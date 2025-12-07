@@ -108,6 +108,15 @@ ENV PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH
 
+# ----------------- NVIM TEST SETUP ------------------
+RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz && \
+  rm -rf /opt/nvim-linux-x86_64 && \
+  tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+ENV PATH=$PATH:/opt/nvim-linux-x86_64/bin
+
+COPY .config/nvim /home/robot/.config/nvim
+# ----------------------------------------------------
+
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=noninteractive
