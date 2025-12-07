@@ -1,6 +1,10 @@
 FROM ros:jazzy
 ENV ROS_DISTRO=jazzy
 
+ENV LD_LIBRARY_PATH=""
+ENV PKG_CONFIG_PATH=""
+ENV PYTHONPATH=""
+
 # General packages
 SHELL ["/bin/bash", "-c" ]
 RUN apt-get update && apt-get install -y \
@@ -42,6 +46,8 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
   python3-colcon-common-extensions \
   python3-vcstool
+
+ENV LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 
 # robotpkg
 RUN mkdir -p /etc/apt/keyrings && \
@@ -91,12 +97,19 @@ RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_rend
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
 
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
+ENV ACADOS_SOURCE_DIR=$ACADOS_DIR
+
 # pinocchio
 RUN apt-get install robotpkg-py312-pinocchio -y
 
+ENV PATH=/opt/openrobots/bin:$PATH
+ENV PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
+ENV LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
+ENV PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH
+
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # workspace
