@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
   cmake \
   cmake-curses-gui \
   cython3 \
+  libomp-dev \
   libeigen3-dev \
   libtinyxml-dev \
   liburdfdom-dev \
