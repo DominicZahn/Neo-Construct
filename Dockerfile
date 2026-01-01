@@ -4,6 +4,7 @@ ENV ROS_DISTRO=jazzy
 ENV LD_LIBRARY_PATH=""
 ENV PKG_CONFIG_PATH=""
 ENV PYTHONPATH=""
+ENV CMAKE_PREFIX_PATH=""
 
 # General packages
 SHELL ["/bin/bash", "-c" ]
@@ -29,8 +30,7 @@ RUN apt-get update && apt-get install -y \
   liburdfdom-headers-dev \
   pkg-config \
   python3-full \
-  python3-pip \
-  python3-numpy
+  python3-pip
 
 # ROS2 packages
 RUN apt-get update && apt-get install -y \
@@ -95,6 +95,7 @@ RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
 WORKDIR ${ACADOS_DIR}
 RUN pip install -e interfaces/acados_template --break-system-packages
 RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
+  mkdir bin/ && \
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
 
@@ -102,12 +103,15 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
 ENV ACADOS_SOURCE_DIR=$ACADOS_DIR
 
 # pinocchio
-RUN apt-get install robotpkg-py312-pinocchio -y
-
+RUN apt install -qqy robotpkg-py312-pinocchio
 ENV PATH=/opt/openrobots/bin:$PATH
 ENV PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
 ENV LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
-ENV PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH
+ENV PYTHONPATH=$PYTHONPATH:/opt/openrobots/lib/python3.12/site-packages
+ENV CMAKE_PREFIX_PATH=/opt/openrobots:$CMAKE_PREFIX_PATH
+
+# meshcat (visualizer)
+RUN pip install meshcat --break-system-packages
 
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
