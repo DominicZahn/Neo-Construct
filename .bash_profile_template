@@ -4,6 +4,9 @@ source /home/robot/ws/install/setup.bash
 alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'
 alias lsa='ls -la'
 
+export GZ_IP=127.0.0.1
+export GZ_RELAY=127.0.0.1
+
 # acados
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
 # export ACADOS_SOURCE_DIR=$ACADOS_DIR
