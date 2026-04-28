@@ -216,7 +216,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /home/robot/ws
 COPY .bash_profile_template /home/robot/.bash_profile
 RUN chmod +x /home/robot/.bash_profile
-RUN echo 'set-option -g default-shell "/bin/bash"' > /home/robot/.tmux.conf
+# RUN echo 'set-option -g default-shell "/bin/bash"' > /home/robot/.tmux.conf
+COPY .tmux.conf /home/robot/.tmux.conf
 
 # GPU plugins in Gazebo
 ENV IGN_RENDER_ENGINE=ogre2
