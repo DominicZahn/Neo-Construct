@@ -1,5 +1,5 @@
 ROS_DISTRO=jazzy
-CONTAINER_NAME=ros2-$(ROS_DISTRO)
+CONTAINER_NAME=neo-construct
 GPU:=$(shell command -v nvidia-smi >/dev/null 2>&1 && echo true || echo false)
 HOST_UID=$(shell id -u)
 HOST_GID=$(shell id -g)
@@ -22,7 +22,7 @@ run:
 		--device=/dev/dri/ \
 		--mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix \
 		--mount type=bind,src=$(CURDIR)/ws,dst=/home/robot/ws \
-		$(shell [ -d $(CURDIR)/../pkgs ] && echo "--mount type=bind,src=$(CURDIR)/../pkgs,dst=/home/robot/ws/pkgs") \
+		$(shell [ -d $(CURDIR)/../ext_pkgs ] && echo "--mount type=bind,src=$(CURDIR)/../ext_pkgs,dst=/home/robot/ws/ext_pkgs") \
 		--name $(CONTAINER_NAME) \
 		$(CONTAINER_NAME)
 stop:
