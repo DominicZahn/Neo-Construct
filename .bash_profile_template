@@ -1,18 +1,21 @@
 export TERM=xterm-256color
+
+# ROS2
 source /opt/ros/${ROS_DISTRO}/setup.bash
 source /home/robot/ws/install/setup.bash
-alias build='cd /home/robot/ws/ && colcon build --parallel-workers 10 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'
+
+# helpers
+alias build='cd /home/robot/ws/ && colcon build --parallel-workers $(nproc) --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo && source install/setup.bash'
 alias lsa='ls -la'
 
+# gazebo
 export GZ_IP=127.0.0.1
 export GZ_RELAY=127.0.0.1
 
-# acados
-# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
-# export ACADOS_SOURCE_DIR=$ACADOS_DIR
+# venv
+source /opt/venv/bin/activate
 
-# pinocchio
-# export PATH=/opt/openrobots/bin:$PATH
-# export PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
-# export LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
-# export PYTHONPATH=/opt/openrobots/lib/python3.12/site-packages:$PYTHONPATH
+# acados
+export PYTHONPATH=$ACADOS_DIR/interfaces/acados_templates:$PYTHONPATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
+export ACADOS_SOURCE_DIR=$ACADOS_DIR

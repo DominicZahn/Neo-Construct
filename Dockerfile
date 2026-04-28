@@ -9,6 +9,7 @@ ENV CMAKE_PREFIX_PATH=""
 # General packages
 SHELL ["/bin/bash", "-c" ]
 RUN apt-get update && apt-get install -y \
+  gosu \
   x11-apps \
   gdb \
   nano \
@@ -50,11 +51,11 @@ RUN apt-get update && apt-get install -y \
 
 ENV LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 
-# robotpkg
-RUN mkdir -p /etc/apt/keyrings && \
-  curl http://robotpkg.openrobots.org/packages/debian/robotpkg.asc | tee /etc/apt/keyrings/robotpkg.asc && \
-  echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg" | tee /etc/apt/sources.list.d/robotpkg.list && \
-  apt-get update
+# setup python venv -> use /opt/venv/bin/pip instead of pip !!!!
+RUN python3 -m venv /opt/venv --system-site-packages
+ENV PATH=/opt/venv/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/venv/bin:$LD_LIBRARY_PATH
+ENV PYTHONPATH=/opt/venv/lib/python3.12/site-packages:$PYTHONPATH
 
 # rbdl with urdfreader
 ENV RBDL_DIR=/opt/rbdl
@@ -78,40 +79,134 @@ RUN cmake .. && \
   make -j$(nproc) && \
   make install
 
+# pinocchio
+# --- optional dependencies: apt packages
+RUN apt-get update && apt-get install -y \
+  libboost-python-dev \
+  libboost-serialization-dev \
+  libassimp-dev \
+  liboctomap-dev \
+  libqhull-dev \
+  swig
+RUN /opt/venv/bin/pip install \
+  hpp-fcl \
+  eigenpy \
+  pybind11-stubgen
+
+# --- CppAD
+WORKDIR /opt/cppad
+RUN git clone https://github.com/coin-or/CppAD.git . && \
+  mkdir build && cd build && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release && \
+  make -j$(nproc) && \
+  make install
+
+# --- CppADCodeGen
+WORKDIR /opt/cppadcodegen
+RUN git clone https://github.com/joaoleal/CppADCodeGen.git . && \
+  mkdir build && cd build && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCppAD_DIR=/opt/venv && \
+  make -j$(nproc) && \
+  make install
+
+# --- casadi
+WORKDIR /opt/casadi
+RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . && \
+  mkdir build && cd build && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DWITH_PYTHON=ON \
+  -DWITH_PYTHON3=ON \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
+  -DWITH_OPENMP=ON \
+  -DWITH_THREAD=ON && \
+  make -j$(nproc) && \
+  make install
+
+# --- eigenpy
+WORKDIR /opt/eigenpy
+RUN git clone --recursive https://github.com/stack-of-tasks/eigenpy.git . && \
+  mkdir build && cd build && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
+  -DBUILD_PYTHON_INTERFACE=ON && \
+  make -j4 && \
+  make install
+
+# --- coal
+RUN apt-get install -y \
+  libboost-serialization-dev \
+  libboost-filesystem-dev \
+  libboost-test-dev \
+  libboost-python-dev \
+  libqhull-dev \
+  liboctomap-dev
+WORKDIR /opt/coal
+RUN git clone --recursive https://github.com/coal-library/coal.git . && \
+  mkdir build && cd build && \
+  . /opt/venv/bin/activate && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
+  -DBUILD_PYTHON_INTERFACE=ON \
+  -DCOAL_HAS_QHULL=ON && \
+  make -j$(nproc) && \
+  make install
+
+# --- pinocchio
+WORKDIR /opt/pinocchio
+RUN git clone --depth 1 --branch v4.0.0 --recursive https://github.com/stack-of-tasks/pinocchio.git . && \
+  mkdir build && cd build && \
+  source /opt/venv/bin/activate && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
+  -DBUILD_PYTHON_INTERFACE=ON \
+  -DGENERATE_PYTHON_STUBS=ON \
+  -DBUILD_WITH_CASADI_SUPPORT=ON \
+  -DBUILD_WITH_COLLISION_SUPPORT=ON \
+  -DBUILD_WITH_URDF_SUPPORT=ON \
+  -DBUILD_WITH_OPENMP_SUPPORT=ON \
+  -DBUILD_WITH_AUTODIFF_SUPPORT=ON \
+  -DBUILD_WITH_CODEGEN_SUPPORT=ON && \
+  make -j2 && \
+  make install
+
+# meshcat (visualizer)
+RUN /opt/venv/bin/pip install meshcat
+
 # acados
 ENV ACADOS_DIR=/opt/acados
-RUN git clone https://github.com/acados/acados.git /opt/acados
+RUN git clone --depth 1 --branch v0.5.3 https://github.com/acados/acados.git /opt/acados
 WORKDIR ${ACADOS_DIR}
 RUN git submodule update --recursive --init
 WORKDIR ${ACADOS_DIR}/build
-RUN cmake -D ACADOS_WITH_QPOASES=ON .. && \
-  cmake -D ACADOS_WITH_DAQP=ON .. && \
-  cmake -D ACADOS_WITH_OPENMP=ON .. && \
-  cmake -D ACADOS_EXAMPLES=ON .. && \
+RUN cmake .. \
+  -DACADOS_WITH_QPOASES=ON \
+  -DACADOS_WITH_DAQP=ON \
+  -DACADOS_WITH_OPENMP=ON \
+  -DACADOS_EXAMPLES=ON && \
   make -j$(nproc) && \
   make install
 
 # acados python
 WORKDIR ${ACADOS_DIR}
-RUN pip install -e interfaces/acados_template --break-system-packages
+RUN /opt/venv/bin/pip install numpy scipy matplotlib Deprecated
+RUN /opt/venv/bin/pip install -e interfaces/acados_template --no-deps
 RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
-  mkdir bin/ && \
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
 
+ENV PYTHONPATH=$ACADOS_DIR/interfaces/acados_template:$PYTHONPATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACADOS_DIR/lib
 ENV ACADOS_SOURCE_DIR=$ACADOS_DIR
-
-# pinocchio
-RUN apt install -qqy robotpkg-py312-pinocchio
-ENV PATH=/opt/openrobots/bin:$PATH
-ENV PKG_CONFIG_PATH=/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH
-ENV LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
-ENV PYTHONPATH=$PYTHONPATH:/opt/openrobots/lib/python3.12/site-packages
-ENV CMAKE_PREFIX_PATH=/opt/openrobots:$CMAKE_PREFIX_PATH
-
-# meshcat (visualizer)
-RUN pip install meshcat --break-system-packages
 
 # clean up
 RUN rm -rf /var/lib/apt/lists/*
@@ -136,5 +231,4 @@ ENV XAUTHORITY=/tmp/.docker.xauth
 COPY entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
-SHELL ["/bin/bash", "-c"]
 CMD [ "tmux" ]

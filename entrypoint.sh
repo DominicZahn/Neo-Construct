@@ -23,4 +23,4 @@ fi
 
 chown -R "${USERNAME}:${USERNAME}" "/home/${USERNAME}"
 echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-exec su "${USERNAME}" -c "$@"
+exec gosu "${USERNAME}" "$@"

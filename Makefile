@@ -22,7 +22,7 @@ run:
 		--device=/dev/dri/ \
 		--mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix \
 		--mount type=bind,src=$(CURDIR)/ws,dst=/home/robot/ws \
-		--mount type=bind,src=$(CURDIR)/../pkgs,dst=/home/robot/ws/pkgs \
+		$(shell [ -d $(CURDIR)/../pkgs ] && echo "--mount type=bind,src=$(CURDIR)/../pkgs,dst=/home/robot/ws/pkgs") \
 		--name $(CONTAINER_NAME) \
 		$(CONTAINER_NAME)
 stop:
