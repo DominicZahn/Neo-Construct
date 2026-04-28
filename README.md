@@ -1,4 +1,8 @@
 <div align="center">
+  <img style="border-radius:30px" width="200" height="200" src="docu/icon.png"/>
+</div>
+
+<div align="center">
 <h1>🥋 Neo Construct 🧰</h1>
 </div>
 
