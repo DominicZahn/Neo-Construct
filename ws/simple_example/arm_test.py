@@ -168,4 +168,3 @@ plt.ion()
 plt.pause(1)
 
 runVis(solver, N, Tf, robot, 2.0)
-
