@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
   liburdfdom-dev \
   liburdfdom-headers-dev \
   pkg-config \
+  swig \
   python3-full \
   python3-pip
 
@@ -63,9 +64,12 @@ WORKDIR ${RBDL_DIR}
 RUN git clone --recursive https://github.com/rbdl/rbdl /opt/rbdl
 RUN git submodule init && git submodule update
 WORKDIR ${RBDL_DIR}/build
-RUN cmake -D CMAKE_BUILD_TYPE=Release .. && \
-  cmake -D RBDL_BUILD_ADDON_URDFREADER=ON .. && \
-  cmake -D RBDL_BUILD_PYTHON_WRAPPER=ON .. && \
+RUN source /opt/venv/bin/activate && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv/ \
+  -DRBDL_BUILD_ADDON_URDFREADER=ON  \
+  -DRBDL_BUILD_PYTHON_WRAPPER=ON \
   cmake build . && \
   make -j$(nproc) && \
   make install
@@ -74,8 +78,11 @@ RUN cmake -D CMAKE_BUILD_TYPE=Release .. && \
 ENV NLOPT_DIR=/opt/nlopt
 RUN git clone https://github.com/stevengj/nlopt.git /opt/nlopt
 WORKDIR ${NLOPT_DIR}/build
-RUN cmake .. && \
-  cmake build . && \
+RUN source /opt/venv/bin/activate && \
+  cmake .. && \
+  cmake build . \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv/ && \
   make -j$(nproc) && \
   make install
 
@@ -86,8 +93,7 @@ RUN apt-get update && apt-get install -y \
   libboost-serialization-dev \
   libassimp-dev \
   liboctomap-dev \
-  libqhull-dev \
-  swig
+  libqhull-dev
 RUN /opt/venv/bin/pip install \
   hpp-fcl \
   eigenpy \
