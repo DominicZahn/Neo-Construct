@@ -62,6 +62,8 @@ It renders the robot inside a browser window on a localhost window at
 http://127.0.0.1:7000/static/
 ```
 
+![arm_preview](docu/arm.png)
+
 > MeshCat does not automatically refresh the side when the script is restarted. The browser window needs to be refreshed (`F5`) after each run to update the robots pose.
 
 ### File Structure
