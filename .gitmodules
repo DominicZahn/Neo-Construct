@@ -1,0 +1,3 @@
+[submodule "ws/src/ros2_heinz"]
+	path = ws/src/ros2_heinz
+	url = https://github.com/K-d4wg/ros2_heinz.git
