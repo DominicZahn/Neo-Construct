@@ -1,0 +1,237 @@
+<?xml version="1.0" ?>
+<!-- From ros2_control demo example 11 -->
+<!-- 4 Wheel Robot with front steering and rear drive -->
+<robot name="carlikebot_robot">
+  <material name="black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.4235294117647059 0.0392156862745098 1.0"/>
+  </material>
+  <material name="brown">
+    <color rgba="0.8705882352941177 0.8117647058823529 0.7647058823529411 1.0"/>
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+  <material name="invisible">
+    <color rgba="0.0 0.0 0.0 0.0"/>
+  </material>
+  <!-- <xacro:property name="wheeltrack" value="" -->
+  <!-- Base Link -->
+  <link name="base_link"/>
+  <!-- Chassis -->
+  <link name="chassis_link">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.525 0.26 0.06"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.525 0.26 0.06"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="4.0"/>
+      <inertia ixx="0.000270" ixy="0.0" ixz="0.0" iyy="0.000270" iyz="0.0" izz="0.000426"/>
+    </inertial>
+  </link>
+  <joint name="chassis_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.08"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <!-- rear wheels -->
+  <!-- virtual rear wheel -->
+  <link name="virtual_rear_wheel">
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.01" radius="0.05"/>
+      </geometry>
+      <material name="invisible"/>
+    </visual>
+  </link>
+  <joint name="virtual_rear_wheel_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="virtual_rear_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="-0.1625 0 -0.03"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100.0" velocity="100.0"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <!-- rear right wheel -->
+  <link name="rear_right_wheel">
+    <collision>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <mass value="0.34055"/>
+      <inertia ixx="0.000270" ixy="0.0" ixz="0.0" iyy="0.000270" iyz="0.0" izz="0.000426"/>
+    </inertial>
+  </link>
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="rear_right_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="-0.1625 0.13 -0.03"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100.0" velocity="100.0"/>
+    <dynamics damping="0.2"/>
+    <mimic joint="virtual_rear_wheel_joint" multiplier="1.0" offset="0.0"/>
+  </joint>
+  <!-- rear left wheel -->
+  <link name="rear_left_wheel">
+    <collision>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <mass value="0.34055"/>
+      <inertia ixx="0.000270" ixy="0.0" ixz="0.0" iyy="0.000270" iyz="0.0" izz="0.000426"/>
+    </inertial>
+  </link>
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <parent link="chassis_link"/>
+    <child link="rear_left_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="-0.1625 -0.13 -0.03"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100.0" velocity="100.0"/>
+    <dynamics damping="0.2"/>
+    <mimic joint="virtual_rear_wheel_joint" multiplier="1.0" offset="0.0"/>
+  </joint>
+  <!-- front wheels -->
+  <!-- virtual front wheel -->
+  <link name="virtual_front_wheel">
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.01" radius="0.05"/>
+      </geometry>
+      <material name="invisible"/>
+    </visual>
+  </link>
+  <joint name="virtual_front_wheel_joint" type="revolute">
+    <parent link="chassis_link"/>
+    <child link="virtual_front_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="0.1625 0 -0.03"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="100.0" lower="-0.4" upper="0.4" velocity="10.0"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <!-- front right wheel -->
+  <link name="front_right_wheel">
+    <collision>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <mass value="0.34055"/>
+      <inertia ixx="0.000270" ixy="0.0" ixz="0.0" iyy="0.000270" iyz="0.0" izz="0.000426"/>
+    </inertial>
+  </link>
+  <joint name="front_right_wheel_joint" type="revolute">
+    <parent link="chassis_link"/>
+    <child link="front_right_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="0.1625 0.13 -0.03"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="100.0" lower="-0.4" upper="0.4" velocity="10.0"/>
+    <dynamics damping="0.2"/>
+    <mimic joint="virtual_front_wheel_joint" multiplier="1.0" offset="0.0"/>
+  </joint>
+  <!-- front left steering -->
+  <link name="front_left_wheel">
+    <collision>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0 0 0"/>
+      <mass value="0.34055"/>
+      <inertia ixx="0.000270" ixy="0.0" ixz="0.0" iyy="0.000270" iyz="0.0" izz="0.000426"/>
+    </inertial>
+  </link>
+  <joint name="front_left_wheel_joint" type="revolute">
+    <parent link="chassis_link"/>
+    <child link="front_left_wheel"/>
+    <origin rpy="0 0 1.5707963267948966" xyz="0.1625 -0.13 -0.03"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="100.0" lower="-0.4" upper="0.4" velocity="10.0"/>
+    <dynamics damping="0.2"/>
+    <mimic joint="virtual_front_wheel_joint" multiplier="1.0" offset="0.0"/>
+  </joint>
+  <ros2_control name="CarlikeBot" type="system">
+    <hardware>
+      <plugin>ros2_control_demo_example_11/CarlikeBotSystemHardware</plugin>
+      <param name="example_param_hw_start_duration_sec">0</param>
+      <param name="example_param_hw_stop_duration_sec">3.0</param>
+    </hardware>
+    <joint name="virtual_front_wheel_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+    </joint>
+    <joint name="virtual_rear_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+  </ros2_control>
+</robot>

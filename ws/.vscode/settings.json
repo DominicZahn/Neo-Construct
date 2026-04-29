@@ -1,0 +1,13 @@
+{
+  "python.defaultInterpreterPath": "/opt/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "/opt/venv/lib/python3.12/site-packages",
+    "/opt/ros/jazzy/lib/python3.12/site-packages",
+    "/home/robot/ws/build"
+  ],
+  "python.autoComplete.extraPaths": [
+    "/opt/venv/lib/python3.12/site-packages",
+    "/opt/ros/jazzy/lib/python3.12/site-packages",
+    "/home/robot/ws/build"
+  ]
+}
