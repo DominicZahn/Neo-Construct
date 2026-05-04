@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-tf2-ros \
   ros-${ROS_DISTRO}-tf2-geometry-msgs \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
+  ros-${ROS_DISTRO}-rqt-common-plugins \
   python3-colcon-common-extensions \
   python3-vcstool
 
@@ -222,7 +223,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /home/robot/ws
 COPY .bash_profile_template /home/robot/.bash_profile
 RUN chmod +x /home/robot/.bash_profile
-# RUN echo 'set-option -g default-shell "/bin/bash"' > /home/robot/.tmux.conf
 COPY .tmux.conf /home/robot/.tmux.conf
 
 # GPU plugins in Gazebo
