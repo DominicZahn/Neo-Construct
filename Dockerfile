@@ -47,7 +47,7 @@ RUN apt-get update && apt-get install -y \
   ros-${ROS_DISTRO}-tf2-ros \
   ros-${ROS_DISTRO}-tf2-geometry-msgs \
   ros-${ROS_DISTRO}-joint-state-publisher-gui \
-  ros-${ROS_DISTRO}-rqt-common-plugins \
+  ros-${ROS_DISTRO}-rqt* \
   python3-colcon-common-extensions \
   python3-vcstool
 
@@ -56,15 +56,16 @@ ENV LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 # setup python venv -> use /opt/venv/bin/pip instead of pip !!!!
 RUN python3 -m venv /opt/venv --system-site-packages
 ENV PATH=/opt/venv/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/venv/bin:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/opt/venv/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH=/opt/venv/lib/python3.12/site-packages:$PYTHONPATH
 
 # rbdl with urdfreader
 ENV RBDL_DIR=/opt/rbdl
-WORKDIR ${RBDL_DIR}
-RUN git clone --recursive https://github.com/rbdl/rbdl /opt/rbdl
-RUN git submodule init && git submodule update
-WORKDIR ${RBDL_DIR}/build
+WORKDIR $RBDL_DIR
+RUN git clone --recursive https://github.com/rbdl/rbdl /opt/rbdl && \
+  git submodule init && git submodule update
+RUN /opt/venv/bin/pip install numpy scipy matplotlib
+WORKDIR $RBDL_DIR/build
 RUN source /opt/venv/bin/activate && \
   cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
@@ -74,18 +75,20 @@ RUN source /opt/venv/bin/activate && \
   cmake build . && \
   make -j$(nproc) && \
   make install
+ENV PYTHONPATH=${PYTHONPATH}:${RBDL_DIR}/build/python
 
 # nlopt
 ENV NLOPT_DIR=/opt/nlopt
 RUN git clone https://github.com/stevengj/nlopt.git /opt/nlopt
 WORKDIR ${NLOPT_DIR}/build
 RUN source /opt/venv/bin/activate && \
-  cmake .. && \
-  cmake build . \
-  -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
-  -DCMAKE_INSTALL_PREFIX=/opt/venv/ && \
+  cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv/ \
+  -DPYTHON_EXECUTABLE=/opt/venv/bin/python && \
   make -j$(nproc) && \
   make install
+ENV PYTHONPATH=${PYTHONPATH}:${NLOPT_DIR}/build/python
 
 # pinocchio
 # --- optional dependencies: apt packages
