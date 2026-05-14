@@ -123,7 +123,8 @@ RUN git clone https://github.com/joaoleal/CppADCodeGen.git . && \
   make install
 
 # --- casadi
-WORKDIR /opt/casadi
+ENV CASADI_DIR=/opt/casadi
+WORKDIR ${CASADI_DIR}
 RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . && \
   mkdir build && cd build && \
   cmake .. \
@@ -137,7 +138,8 @@ RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . &&
   make install
 
 # --- eigenpy
-WORKDIR /opt/eigenpy
+ENV EIGENPY_DIR = /opt/eigenpy
+WORKDIR ${EIGENPY_DIR}
 RUN git clone --recursive https://github.com/stack-of-tasks/eigenpy.git . && \
   mkdir build && cd build && \
   cmake .. \
@@ -156,7 +158,8 @@ RUN apt-get install -y \
   libboost-python-dev \
   libqhull-dev \
   liboctomap-dev
-WORKDIR /opt/coal
+ENV COAL_DIR=/opt/coal
+WORKDIR ${COAL_DIR}
 RUN git clone --recursive https://github.com/coal-library/coal.git . && \
   mkdir build && cd build && \
   . /opt/venv/bin/activate && \
@@ -170,7 +173,8 @@ RUN git clone --recursive https://github.com/coal-library/coal.git . && \
   make install
 
 # --- pinocchio
-WORKDIR /opt/pinocchio
+ENV PINOCCHIO_DIR=/opt/pinocchio
+WORKDIR ${PINOCCHIO_DIR}
 RUN git clone --depth 1 --branch v4.0.0 --recursive https://github.com/stack-of-tasks/pinocchio.git . && \
   mkdir build && cd build && \
   source /opt/venv/bin/activate && \
@@ -188,6 +192,7 @@ RUN git clone --depth 1 --branch v4.0.0 --recursive https://github.com/stack-of-
   -DBUILD_WITH_CODEGEN_SUPPORT=ON && \
   make -j2 && \
   make install
+ENV EXAMPLE_ROBOT_DATA_MODEL_DIR=${PINOCCHIO_DIR}/models/example-robot-data/robots/
 
 # meshcat (visualizer)
 RUN /opt/venv/bin/pip install meshcat

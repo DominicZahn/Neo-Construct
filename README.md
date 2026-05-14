@@ -16,7 +16,7 @@ So this setup can be used directly from the command line without requiring any a
 git clone --recursive https://github.com/DominicZahn/Neo-Construct.git
 ```
 
-2. Enter the parent directory, which holds the `Dockerfile` and `Makefile`. From there build the Docker with
+1. Enter the parent directory, which holds the `Dockerfile` and `Makefile`. From there build the Docker with
 
 ```bash
 make build
@@ -24,13 +24,13 @@ make build
 
 > The first time this will take a long time (~1-2h), as it builds lots of packages from source.
 
-3. After the Docker was built successfully it can be run by
+1. After the Docker was built successfully it can be run by
 
 ```bash
 make run
 ```
 
-4. Now inside the `neo-construct` container you can enjoy the whole containerized environment by starting up on of the examples. The docker can be controlled by the `Makefile` and general [docker commands](https://docs.docker.com/get-started/docker_cheatsheet.pdf).
+1. Now inside the `neo-construct` container you can enjoy the whole containerized environment by starting up on of the examples. The docker can be controlled by the `Makefile` and general [docker commands](https://docs.docker.com/get-started/docker_cheatsheet.pdf).
 
 ### Examples
 
