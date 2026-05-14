@@ -70,8 +70,7 @@ def cost(ac_model: AcadosModel) -> AcadosOcpCost:
 
     # tf: ||p - p_desired||² (p: endeffector position)
     ocp_cost.cost_type_e = "NONLINEAR_LS"
-    d = p - target
-    ac_model.cost_y_expr_e = ca.dot(d,d)
+    ac_model.cost_y_expr_e = p - target
     ocp_cost.yref_e = 0
     ocp_cost.W_e = np.eye(1)
 
