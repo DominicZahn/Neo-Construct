@@ -1,7 +1,7 @@
 FROM ros:jazzy
 ENV ROS_DISTRO=jazzy
 
-ENV LD_LIBRARY_PATH=""
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/
 ENV PKG_CONFIG_PATH=""
 ENV PYTHONPATH=""
 ENV CMAKE_PREFIX_PATH=""
@@ -56,7 +56,7 @@ ENV LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 # setup python venv -> use /opt/venv/bin/pip instead of pip !!!!
 RUN python3 -m venv /opt/venv --system-site-packages
 ENV PATH=/opt/venv/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/venv/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/opt/venv/lib:/opt/venv:$LD_LIBRARY_PATH
 ENV PYTHONPATH=/opt/venv/lib/python3.12/site-packages:$PYTHONPATH
 
 # rbdl with urdfreader
@@ -108,6 +108,7 @@ WORKDIR /opt/cppad
 RUN git clone https://github.com/coin-or/CppAD.git . && \
   mkdir build && cd build && \
   cmake .. \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
   -DCMAKE_BUILD_TYPE=Release && \
   make -j$(nproc) && \
   make install
@@ -117,6 +118,7 @@ WORKDIR /opt/cppadcodegen
 RUN git clone https://github.com/joaoleal/CppADCodeGen.git . && \
   mkdir build && cd build && \
   cmake .. \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
   -DCMAKE_BUILD_TYPE=Release \
   -DCppAD_DIR=/opt/venv && \
   make -j$(nproc) && \
@@ -129,6 +131,7 @@ RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . &&
   mkdir build && cd build && \
   cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=/opt/venv \
   -DWITH_PYTHON=ON \
   -DWITH_PYTHON3=ON \
   -DPYTHON_EXECUTABLE=/opt/venv/bin/python \
