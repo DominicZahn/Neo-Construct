@@ -138,7 +138,7 @@ RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . &&
   make install
 
 # --- eigenpy
-ENV EIGENPY_DIR = /opt/eigenpy
+ENV EIGENPY_DIR=/opt/eigenpy
 WORKDIR ${EIGENPY_DIR}
 RUN git clone --recursive https://github.com/stack-of-tasks/eigenpy.git . && \
   mkdir build && cd build && \
