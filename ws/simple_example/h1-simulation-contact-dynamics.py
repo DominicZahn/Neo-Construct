@@ -21,8 +21,6 @@ model_path = Path('/home/robot/ws/src/ros2_heinz/h1_gazebo_sim/ros_gz_h1_descrip
 mesh_dir = model_path.parent.parent
 urdf_filename = "h1_2_handless.urdf"
 urdf_model_path = model_path / "h1_ign/" / urdf_filename
-# srdf_filename = "h1_2.srdf"
-# srdf_full_path = model_path / "h1_ign/" / srdf_filename
 srdf_filename = "h1_2.srdf"
 srdf_full_path = srdf_filename
 
@@ -56,7 +54,7 @@ q0 = model.referenceConfigurations["knees_bend_0.4"] # knees_bend_0.2 ; knees_be
 # -----------------------------
 q_ref = pin.integrate(model, q0, 0.1 * np.random.rand(model.nv))
 viz.display(q0)
-input()
+input("Open the Meshcat Viewer and than pres RETURN to advance")
 
 feet_name = ["left_ankle_roll_link", "right_ankle_roll_link"]
 frame_ids = [model.getFrameId(frame_name) for frame_name in feet_name]
