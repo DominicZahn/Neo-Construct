@@ -144,7 +144,7 @@ RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . &&
 # --- eigenpy
 ENV EIGENPY_DIR=/opt/eigenpy
 WORKDIR ${EIGENPY_DIR}
-RUN git clone --recursive https://github.com/stack-of-tasks/eigenpy.git . && \
+RUN git clone --recursive ---branch v3.13.0 https://github.com/stack-of-tasks/eigenpy.git . && \
   mkdir build && cd build && \
   cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
@@ -164,7 +164,7 @@ RUN apt-get install -y \
   liboctomap-dev
 ENV COAL_DIR=/opt/coal
 WORKDIR ${COAL_DIR}
-RUN git clone --recursive https://github.com/coal-library/coal.git . && \
+RUN git clone --recursive --branch v3.0.3 https://github.com/coal-library/coal.git . && \
   mkdir build && cd build && \
   . /opt/venv/bin/activate && \
   cmake .. \
@@ -191,10 +191,9 @@ RUN git clone --depth 1 --branch v4.0.0 --recursive https://github.com/stack-of-
   -DBUILD_WITH_CASADI_SUPPORT=ON \
   -DBUILD_WITH_COLLISION_SUPPORT=ON \
   -DBUILD_WITH_URDF_SUPPORT=ON \
-  -DBUILD_WITH_SDF_SUPPORT=ON \
   -DBUILD_WITH_OPENMP_SUPPORT=ON \
   -DBUILD_WITH_AUTODIFF_SUPPORT=ON \
-  -DBUILD_WITH_CODEGEN_SUPPORT=ON && \
+  -DBUILD_WITH_CODEGEN_SUPPORT=ON \
   -DINSTALL_DOCUMENTATION=ON && \
   make -j2 && \
   make install
