@@ -1,6 +1,6 @@
 ROS_DISTRO=jazzy
-CONTAINER_VERSION="1.0.1"
-CONTAINER_NAME="neo-construct:$(CONTAINER_VERSION)"
+CONTAINER_VERSION=1.0.1
+CONTAINER_NAME=neo-construct:$(CONTAINER_VERSION)
 GPU:=$(shell command -v nvidia-smi >/dev/null 2>&1 && echo true || echo false)
 HOST_UID=$(shell id -u)
 HOST_GID=$(shell id -g)
