@@ -1,16 +1,17 @@
 ROS_DISTRO=jazzy
 CONTAINER_NAME=neo-construct
+VERSION="1.0.1"
 GPU:=$(shell command -v nvidia-smi >/dev/null 2>&1 && echo true || echo false)
 HOST_UID=$(shell id -u)
 HOST_GID=$(shell id -g)
 
 build:
 	mkdir -p $(CURDIR)/ws/src
-	docker build -t $(CONTAINER_NAME) .
+	docker build -t $(CONTAINER_NAME):$(VERSION) .
 
 run:
 	xhost +local:docker
-	-docker rm -f $(CONTAINER_NAME) 2>/dev/null || true
+	-docker rm -f $(CONTAINER_NAME):$(VERSION) 2>/dev/null || true
 	docker run -it \
 		--hostname $(CONTAINER_NAME) \
 		$(if $(filter true, $(GPU)),--gpus all --runtime=nvidia --env="NVIDIA_VISIBLE_DEVICES=all" --env="NVIDIA_DRIVER_CAPABILITIES=all",) \
