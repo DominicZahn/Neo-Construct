@@ -10,6 +10,7 @@ ENV CMAKE_PREFIX_PATH=""
 SHELL ["/bin/bash", "-c" ]
 RUN apt-get update && apt-get install -y \
   gosu \
+  less \
   x11-apps \
   gdb \
   nano \
