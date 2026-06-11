@@ -206,7 +206,7 @@ RUN /opt/venv/bin/pip install meshcat
 
 # acados
 ENV ACADOS_DIR=/opt/acados
-RUN git clone --depth 1 --branch v0.5.3 https://github.com/acados/acados.git /opt/acados
+RUN git clone --depth 1 --branch v0.5.4 https://github.com/acados/acados.git /opt/acados
 WORKDIR ${ACADOS_DIR}
 RUN git submodule update --recursive --init
 WORKDIR ${ACADOS_DIR}/build
