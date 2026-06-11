@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="h1_2">
+    <group name="left_leg">
+        <chain base_link="left_hip_yaw_link" tip_link="left_ankle_roll_link"/>
+    </group>
+    <group name="right_leg">
+        <chain base_link="right_hip_yaw_link" tip_link="right_ankle_roll_link"/>
+    </group>
+    <group name="left_arm">
+        <chain base_link="left_shoulder_pitch_link" tip_link="left_wrist_yaw_link"/>
+    </group>
+    <group name="right_arm">
+        <chain base_link="right_shoulder_pitch_link" tip_link="right_wrist_yaw_link"/>
+    </group>
+    <group name="all">
+        <group name="left_leg"/>
+        <group name="right_leg"/>
+        <group name="left_arm"/>
+        <group name="right_arm"/>
+    </group>
+  <group_state name="knees_bend_0.2" group="all">
+        <joint name="root_joint" value="0. 0. 1. 0. 0. 0."/>
+        <joint name="left_ankle_pitch_joint" value="-0.2"/>
+        <joint name="left_ankle_roll_joint" value="0"/>
+        <joint name="left_elbow_joint" value="0"/>
+        <joint name="left_hip_pitch_joint" value="-0.2"/>
+        <joint name="left_hip_roll_joint" value="0"/>
+        <joint name="left_knee_joint" value="0.4"/>
+        <joint name="left_shoulder_roll_joint" value="0"/>
+        <joint name="left_shoulder_yaw_joint" value="0"/>
+        <joint name="left_wrist_pitch_joint" value="0"/>
+        <joint name="left_wrist_roll_joint" value="0"/>
+        <joint name="left_wrist_yaw_joint" value="0"/>
+        <joint name="right_ankle_pitch_joint" value="-0.2"/>
+        <joint name="right_ankle_roll_joint" value="0"/>
+        <joint name="right_elbow_joint" value="0"/>
+        <joint name="right_hip_pitch_joint" value="-0.2"/>
+        <joint name="right_hip_roll_joint" value="0"/>
+        <joint name="right_knee_joint" value="0.4"/>
+        <joint name="right_shoulder_roll_joint" value="0"/>
+        <joint name="right_shoulder_yaw_joint" value="0"/>
+        <joint name="right_wrist_pitch_joint" value="0"/>
+        <joint name="right_wrist_roll_joint" value="0"/>
+        <joint name="right_wrist_yaw_joint" value="0"/>
+  </group_state>
+  <group_state name="knees_bend_0.4" group="all">
+        <joint name="root_joint" value="0. 0. 1. 0. 0. 0."/>
+        <joint name="left_ankle_pitch_joint" value="-0.4"/>
+        <joint name="left_ankle_roll_joint" value="0"/>
+        <joint name="left_elbow_joint" value="0"/>
+        <joint name="left_hip_pitch_joint" value="-0.4"/>
+        <joint name="left_hip_roll_joint" value="0"/>
+        <joint name="left_knee_joint" value="0.8"/>
+        <joint name="left_shoulder_roll_joint" value="0"/>
+        <joint name="left_shoulder_yaw_joint" value="0"/>
+        <joint name="left_wrist_pitch_joint" value="0"/>
+        <joint name="left_wrist_roll_joint" value="0"/>
+        <joint name="left_wrist_yaw_joint" value="0"/>
+        <joint name="right_ankle_pitch_joint" value="-0.4"/>
+        <joint name="right_ankle_roll_joint" value="0"/>
+        <joint name="right_elbow_joint" value="0"/>
+        <joint name="right_hip_pitch_joint" value="-0.4"/>
+        <joint name="right_hip_roll_joint" value="0"/>
+        <joint name="right_knee_joint" value="0.8"/>
+        <joint name="right_shoulder_roll_joint" value="0"/>
+        <joint name="right_shoulder_yaw_joint" value="0"/>
+        <joint name="right_wrist_pitch_joint" value="0"/>
+        <joint name="right_wrist_roll_joint" value="0"/>
+        <joint name="right_wrist_yaw_joint" value="0"/>
+  </group_state>
+  <group_state name="T-pose" group="all">
+        <joint name="root_joint" value="0. 0. 1. 0. 0. 0."/>
+        <joint name="left_ankle_pitch_joint" value="0"/>
+        <joint name="left_ankle_roll_joint" value="0"/>
+        <joint name="left_elbow_joint" value="1.5705"/>
+        <joint name="left_hip_pitch_joint" value="0"/>
+        <joint name="left_hip_roll_joint" value="0"/>
+        <joint name="left_knee_joint" value="0"/>
+        <joint name="left_shoulder_roll_joint" value="1.5705"/>
+        <joint name="left_shoulder_yaw_joint" value="0"/>
+        <joint name="left_wrist_pitch_joint" value="0"/>
+        <joint name="left_wrist_roll_joint" value="0"/>
+        <joint name="left_wrist_yaw_joint" value="0"/>
+        <joint name="right_ankle_pitch_joint" value="0"/>
+        <joint name="right_ankle_roll_joint" value="0"/>
+        <joint name="right_elbow_joint" value="1.5705"/>
+        <joint name="right_hip_pitch_joint" value="0"/>
+        <joint name="right_hip_roll_joint" value="0"/>
+        <joint name="right_knee_joint" value="0"/>
+        <joint name="right_shoulder_roll_joint" value="-1.5705"/>
+        <joint name="right_shoulder_yaw_joint" value="0"/>
+        <joint name="right_wrist_pitch_joint" value="0"/>
+        <joint name="right_wrist_roll_joint" value="0"/>
+        <joint name="right_wrist_yaw_joint" value="0"/>
+  </group_state>
+
+    <end_effector name="left_hand" parent_link="left_wrist_yaw_link" group="left_arm"/>
+    <end_effector name="right_hand" parent_link="right_wrist_yaw_link" group="right_arm"/>
+    <end_effector name="right_foot" parent_link="right_ankle_roll_link" group="right_leg"/>
+    <end_effector name="left_foot" parent_link="left_ankle_roll_link" group="left_leg"/>
+
+    <disable_collisions link1="left_hip_yaw_link" link2="left_knee_link" reason="Never"/>
+    <disable_collisions link1="left_hip_yaw_link" link2="right_knee_link" reason="Never"/>
+    <disable_collisions link1="left_hip_yaw_link" link2="torso_link" reason="Never"/>
+    <disable_collisions link1="left_knee_link" link2="pelvis" reason="Never"/>
+    <disable_collisions link1="pelvis" link2="right_hip_pitch_link" reason="Never"/>
+    <disable_collisions link1="pelvis" link2="right_hip_roll_link" reason="Never"/>
+    <disable_collisions link1="pelvis" link2="right_knee_link" reason="Never"/>
+    <disable_collisions link1="pelvis" link2="torso_link" reason="Never"/>
+</robot>
