@@ -221,6 +221,7 @@ WORKDIR ${ACADOS_DIR}
 RUN /opt/venv/bin/pip install numpy scipy matplotlib Deprecated
 RUN /opt/venv/bin/pip install -e interfaces/acados_template --no-deps
 RUN wget https://github.com/acados/tera_renderer/releases/download/v0.2.0/t_renderer-v0.2.0-linux-amd64 && \
+  mkdir bin && \
   mv t_renderer-v0.2.0-linux-amd64 bin/t_renderer && \
   chmod +x bin/t_renderer
 
