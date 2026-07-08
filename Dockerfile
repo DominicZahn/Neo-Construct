@@ -144,7 +144,7 @@ RUN git clone --depth 1 --branch 3.7.2 https://github.com/casadi/casadi.git . &&
 # --- eigenpy
 ENV EIGENPY_DIR=/opt/eigenpy
 WORKDIR ${EIGENPY_DIR}
-RUN git clone --recursive ---branch v3.13.0 https://github.com/stack-of-tasks/eigenpy.git . && \
+RUN git clone --recursive --branch v3.13.0 https://github.com/stack-of-tasks/eigenpy.git . && \
   mkdir build && cd build && \
   cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
@@ -179,7 +179,7 @@ RUN git clone --recursive --branch v3.0.3 https://github.com/coal-library/coal.g
 # --- pinocchio
 ENV PINOCCHIO_DIR=/opt/pinocchio
 WORKDIR ${PINOCCHIO_DIR}
-RUN git clone --depth 1 --branch v4.0.0 --recursive https://github.com/stack-of-tasks/pinocchio.git . && \
+RUN git clone --depth 1 --branch v4.1.0 --recursive https://github.com/stack-of-tasks/pinocchio.git . && \
   mkdir build && cd build && \
   source /opt/venv/bin/activate && \
   cmake .. \
@@ -204,12 +204,13 @@ RUN /opt/venv/bin/pip install meshcat
 
 # acados
 ENV ACADOS_DIR=/opt/acados
-RUN git clone --depth 1 --branch v0.5.4 https://github.com/acados/acados.git /opt/acados
+RUN git clone --depth 1 --branch v0.5.5 https://github.com/acados/acados.git /opt/acados
 WORKDIR ${ACADOS_DIR}
 RUN git submodule update --recursive --init
 WORKDIR ${ACADOS_DIR}/build
 RUN cmake .. \
   -DACADOS_WITH_QPOASES=ON \
+  -DACADOS_WITH_OSQP=ON \
   -DACADOS_WITH_DAQP=ON \
   -DACADOS_WITH_OPENMP=ON \
   -DACADOS_EXAMPLES=ON && \
