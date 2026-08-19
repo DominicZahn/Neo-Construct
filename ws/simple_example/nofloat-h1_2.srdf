@@ -19,7 +19,7 @@
         <group name="right_arm"/>
     </group>
   <group_state name="knees_bend_0.2" group="all">
-        <joint name="root_joint" value="0. 0. 1. 0. 0. 0."/>
+        <joint name="root_joint" value="0. 0. 1.01 0. 0. 0."/>
         <joint name="left_ankle_pitch_joint" value="-0.2"/>
         <joint name="left_ankle_roll_joint" value="0"/>
         <joint name="left_elbow_joint" value="0"/>
@@ -43,8 +43,33 @@
         <joint name="right_wrist_roll_joint" value="0"/>
         <joint name="right_wrist_yaw_joint" value="0"/>
   </group_state>
+  <group_state name="knees_bend_0.4_straight" group="all">
+        <joint name="root_joint" value="0. 0. 0.96 0. 0. 0."/>
+        <joint name="left_ankle_pitch_joint" value="-0.4"/>
+        <joint name="left_ankle_roll_joint" value="0"/>
+        <joint name="left_elbow_joint" value="0.8"/>
+        <joint name="left_hip_pitch_joint" value="-0.4"/>
+        <joint name="left_hip_roll_joint" value="0"/>
+        <joint name="left_knee_joint" value="0.8"/>
+        <joint name="left_shoulder_roll_joint" value="0"/>
+        <joint name="left_shoulder_yaw_joint" value="0"/>
+        <joint name="left_wrist_pitch_joint" value="0"/>
+        <joint name="left_wrist_roll_joint" value="0"/>
+        <joint name="left_wrist_yaw_joint" value="0"/>
+        <joint name="right_ankle_pitch_joint" value="-0.4"/>
+        <joint name="right_ankle_roll_joint" value="0"/>
+        <joint name="right_elbow_joint" value="0.8"/>
+        <joint name="right_hip_pitch_joint" value="-0.4"/>
+        <joint name="right_hip_roll_joint" value="0"/>
+        <joint name="right_knee_joint" value="0.8"/>
+        <joint name="right_shoulder_roll_joint" value="0"/>
+        <joint name="right_shoulder_yaw_joint" value="0"/>
+        <joint name="right_wrist_pitch_joint" value="0"/>
+        <joint name="right_wrist_roll_joint" value="0"/>
+        <joint name="right_wrist_yaw_joint" value="0"/>
+  </group_state>
   <group_state name="knees_bend_0.4" group="all">
-        <joint name="root_joint" value="0. 0. 1. 0. 0. 0."/>
+        <joint name="root_joint" value="0. 0. 0.96 0. 0. 0."/>
         <joint name="left_ankle_pitch_joint" value="-0.4"/>
         <joint name="left_ankle_roll_joint" value="0"/>
         <joint name="left_elbow_joint" value="0"/>
