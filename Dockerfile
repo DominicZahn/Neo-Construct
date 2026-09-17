@@ -106,7 +106,7 @@ RUN /opt/venv/bin/pip install \
 
 # --- CppAD
 WORKDIR /opt/cppad
-RUN git clone https://github.com/coin-or/CppAD.git . && \
+RUN git clone --branch 20260000.0 https://github.com/coin-or/CppAD.git . && \
   mkdir build && cd build && \
   cmake .. \
   -DCMAKE_INSTALL_PREFIX=/opt/venv \
