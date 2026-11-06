@@ -7,5 +7,6 @@ ws/*
 
 # ------- general acdos rules -------
 # !!! Comment this if you want to commit the generated code !!!
+**/codegen_ocp_**/**
 **/c_generated_code/**
 ws/*/*_ocp.json
