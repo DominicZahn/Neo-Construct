@@ -16,6 +16,7 @@ from acados_template import (
     AcadosOcpConstraints,
     AcadosOcpSolver,
 )
+from rich import print
 
 p_target = np.array([0.5, 0.0, 0.5])
 
@@ -43,7 +44,8 @@ def replayMotion(
     dt = realtime_factor * tf / N
     while True:
         input("start visulization on input")
-        print("i : cost_i | u_i")
+        print("  i  |          cost_i          |              u_i               ")
+        print("-----|--------------------------|--------------------------------")
         for i in range(N):
             # read / compute
             qi = solver.get(i, "x")[:nq]
@@ -58,7 +60,7 @@ def replayMotion(
             p_homo = np.eye(4)
             p_homo[:3, [3]] = np.array(ca.DM(pi))
             robot.viewer["p"].set_transform(p_homo)
-            print(i, ":", costi, "|", np.round(ui, 3))
+            print(f'{i:3} | {float(costi):25} | {np.round(ui, 3)}')
             time.sleep(dt)
 
 
@@ -82,12 +84,12 @@ def constraints(ac_model: AcadosModel) -> AcadosOcpConstraints:
 
     # path
     #       limit controls
-    tau_max = 1.0
+    tau_max = 2.0
     ocp_cons.idxbu = np.ones(nq)
     ocp_cons.ubu = np.full(nq, tau_max)
     ocp_cons.lbu = np.full(nq, -tau_max)
     #       limit velocities
-    v_max = 1
+    v_max = 1.0
     ocp_cons.idxbx = np.arange(nq,2*nq)
     ocp_cons.ubx = np.full(nq, v_max)
     ocp_cons.lbx = np.full(nq, -v_max)
@@ -152,7 +154,7 @@ solver.solve()
 solver.print_statistics()
 print("Cost:", solver.get_cost())
 
-if solver.get_status() != 0:
+if solver.status != 0:
     sys.exit(-1)
 
 simX = np.zeros((N+1, ac_model.x.size1()))
